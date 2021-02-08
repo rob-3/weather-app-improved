@@ -90,7 +90,7 @@ function WeeklyForcast({ weekWeather }) {
 
 function DailyForcast({ weatherData }) {
   return (
-    <Box m={1}>
+    <Box display="inline-block" m={1}>
       <Card elevation={3}>
         <CardContent>
           <Typography variant="h5">
