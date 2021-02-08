@@ -23,12 +23,14 @@ function App() {
   const [weekWeather, setWeekWeather] = useState(null);
   const [isLoading, setLoading] = useState(false);
   const [cityName, setCityName] = useState("");
+  const [failed, setFailed] = useState(false);
 
   const typeHandler = event => setQuery(event.target.value);
 
   const fetchCityData = () => {
     setCityName("");
     setLoading(true);
+    setFailed(false);
     fetch(searchURL + query)
       .then(blob => blob.json())
       .then(data => {
@@ -52,12 +54,15 @@ function App() {
           });
       })
       .catch(error => {
-        console.log(error)
+        console.log(error);
+        setLoading(false);
+        setFailed(true);
       });
   };
 
   const output = 
     isLoading ? <CircularProgress /> :
+    failed ? <Typography variant="h3">Request failed!</Typography> :
     !weekWeather ? null :
     <WeeklyForcast weekWeather={weekWeather}/>;
 
