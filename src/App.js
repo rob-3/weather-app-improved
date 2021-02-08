@@ -105,7 +105,7 @@ function App() {
       <Box m={5}>
         <form>
           <TextField label="Type a city!" value={query} onChange={typeHandler}/>
-          <Button variant="contained" color="primary" onClick={fetchWeatherData}>
+          <Button variant="contained" color="primary" onClick={fetchCityChoices}>
             Get Weather Data
           </Button>
         </form>
