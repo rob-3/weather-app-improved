@@ -10,12 +10,14 @@ import {
   Typography,
   List,
   ListItem,
+  CardMedia,
 } from "@material-ui/core";
 import { useState, useEffect } from "react";
 
 const proxy = "https://cors-anywhere.herokuapp.com/";
 const searchURL = proxy + "https://www.metaweather.com/api/location/search/?query=";
 const woeidURL = proxy + "https://www.metaweather.com/api/location/";
+const imgURL = "https://www.metaweather.com/static/img/weather/"
 
 const toFarenheit = celcius => Math.round((celcius * 1.8) + 32);
 
@@ -81,6 +83,7 @@ function App() {
             high: toFarenheit(dayWeather.max_temp),
             low: toFarenheit(dayWeather.min_temp),
             weather: dayWeather.weather_state_name,
+            imgURL: imgURL + dayWeather.weather_state_abbr + ".svg",
             date: dayWeather.applicable_date,
             id: dayWeather.id,
           }))
@@ -133,6 +136,7 @@ function DailyForcast({ weatherData }) {
   return (
     <Box display="inline-block" m={1}>
       <Card elevation={3}>
+        <CardMedia style={{ height: 140 }} image={weatherData.imgURL}/>
         <CardContent>
           <Typography variant="h5">
             {weatherData.date}
