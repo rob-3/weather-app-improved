@@ -60,6 +60,7 @@ function App() {
                 low: toFarenheit(dayWeather.min_temp),
                 weather: dayWeather.weather_state_name,
                 date: dayWeather.applicable_date,
+                id: dayWeather.id,
               }))
             );
           });
