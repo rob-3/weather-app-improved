@@ -10,7 +10,7 @@ import {
   CircularProgress,
   Typography,
 } from "@material-ui/core";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const proxy = "https://cors-anywhere.herokuapp.com/";
 const searchURL = proxy + "https://www.metaweather.com/api/location/search/?query=";
@@ -24,6 +24,17 @@ function App() {
   const [isLoading, setLoading] = useState(false);
   const [cityName, setCityName] = useState("");
   const [failed, setFailed] = useState(false);
+
+  useEffect(() => {
+    const enterListener = event => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        fetchCityData();
+      }
+    };
+    document.addEventListener("keydown", enterListener);
+    return () => document.removeEventListener("keydown", enterListener);
+  }, []);
 
   const typeHandler = event => setQuery(event.target.value);
 
