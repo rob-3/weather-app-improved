@@ -34,11 +34,11 @@ function App() {
     };
     document.addEventListener("keydown", enterListener);
     return () => document.removeEventListener("keydown", enterListener);
-  }, []);
+  }, [fetchCityData]);
 
   const typeHandler = event => setQuery(event.target.value);
 
-  const fetchCityData = () => {
+  function fetchCityData() {
     setCityName("");
     setLoading(true);
     setFailed(false);
