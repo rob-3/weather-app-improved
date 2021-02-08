@@ -8,6 +8,8 @@ import {
   CardContent,
   CircularProgress,
   Typography,
+  List,
+  ListItem,
 } from "@material-ui/core";
 import { useState, useEffect } from "react";
 
@@ -19,52 +21,71 @@ const toFarenheit = celcius => Math.round((celcius * 1.8) + 32);
 
 function App() {
   const [query, setQuery] = useState("");
+  const [cities, setCities] = useState([]);
+  const [selectedIndex, setSelectedIndex] = useState(-1);
   const [weekWeather, setWeekWeather] = useState(null);
   const [isLoading, setLoading] = useState(false);
-  const [cityName, setCityName] = useState("");
   const [failed, setFailed] = useState(false);
 
   useEffect(() => {
     const enterListener = event => {
       if (event.key === "Enter") {
         event.preventDefault();
-        fetchCityData();
+        fetchCityChoices();
       }
     };
     document.addEventListener("keydown", enterListener);
     return () => document.removeEventListener("keydown", enterListener);
-  }, [fetchCityData]);
+  }, [fetchCityChoices]);
 
   function typeHandler(event) {
     setQuery(event.target.value);
   }
 
-  function fetchCityData() {
-    setCityName("");
+  function fetchCityChoices() {
+    setCities([]);
+    setSelectedIndex(-1);
     setLoading(true);
     setFailed(false);
+    setWeekWeather(null);
     fetch(searchURL + query)
       .then(blob => blob.json())
       .then(data => {
-        const city = data[0];
-        setCityName(city.title);
-        const woeid = city.woeid;
-        fetch(woeidURL + woeid)
-          .then(blob => blob.json())
-          .then(cityData => {
-            const verboseWeekWeather = cityData.consolidated_weather;
+        console.log(data);
+        setCities(data.map((city, index) => ({ 
+          name: city.title,
+          woeid: city.woeid,
+          callback: () => {
+            setSelectedIndex(index);
+            fetchWeatherData(city)
+          }
+        })));
+        setLoading(false);
+      })
+      .catch(error => {
+        console.log(error);
+        setLoading(false);
+        setFailed(true);
+      });
+  }
 
-            setLoading(false);
-            setWeekWeather(
-              verboseWeekWeather.map(dayWeather => ({
-                high: toFarenheit(dayWeather.max_temp),
-                low: toFarenheit(dayWeather.min_temp),
-                weather: dayWeather.weather_state_name,
-                date: dayWeather.applicable_date,
-                id: dayWeather.id,
-              }))
-            );
-          });
+  function fetchWeatherData(city) {
+    setLoading(true);
+    fetch(woeidURL + city.woeid)
+      .then(blob => blob.json())
+      .then(cityData => {
+        const verboseWeekWeather = cityData.consolidated_weather;
+
+        setLoading(false);
+        setWeekWeather(
+          verboseWeekWeather.map(dayWeather => ({
+            high: toFarenheit(dayWeather.max_temp),
+            low: toFarenheit(dayWeather.min_temp),
+            weather: dayWeather.weather_state_name,
+            date: dayWeather.applicable_date,
+            id: dayWeather.id,
+          }))
+        );
       })
       .catch(error => {
         console.log(error);
@@ -84,16 +105,24 @@ function App() {
       <Box m={5}>
         <form>
           <TextField label="Type a city!" value={query} onChange={typeHandler}/>
-          <Button variant="contained" color="primary" onClick={fetchCityData}>
+          <Button variant="contained" color="primary" onClick={fetchWeatherData}>
             Get Weather Data
           </Button>
         </form>
       </Box>
+      { cities.length > 0 ? <CityPicker cities={cities} selectedIndex={selectedIndex} /> : null }
       <Typography variant="h3">
-        {cityName}
       </Typography>
       {output}
     </Container>
+  );
+}
+
+function CityPicker({ cities, selectedIndex }) {
+  return (
+    <List>
+      { cities.map((city, index) => <ListItem key={city.name} selected={index === selectedIndex} button onClick={city.callback}>{city.name}</ListItem>) }
+    </List>
   );
 }
 
