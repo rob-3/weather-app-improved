@@ -1,6 +1,6 @@
 import './App.css';
 import 'fontsource-roboto';
-import { Container, TextField, Box, Button, Card, CardContent } from "@material-ui/core";
+import { Container, TextField, Box, Button, Card, CardContent, CircularProgress } from "@material-ui/core";
 import { useState } from "react";
 
 const proxy = "https://cors-anywhere.herokuapp.com/";
@@ -12,10 +12,12 @@ const toFarenheit = celcius => Math.round((celcius * 1.8) + 32);
 function App() {
   const [query, setQuery] = useState("");
   const [highTemp, setHighTemp] = useState(null);
+  const [isLoading, setLoading] = useState(false);
 
   const typeHandler = event => setQuery(event.target.value);
 
   const fetchCityData = () => {
+    setLoading(true);
     fetch(searchURL + query)
       .then(blob => blob.json())
       .then(data => {
@@ -27,6 +29,7 @@ function App() {
           .then(cityData => {
             const weatherData = cityData.consolidated_weather[0];
 
+            setLoading(false);
             setHighTemp(toFarenheit(weatherData.max_temp));
           });
       })
@@ -47,7 +50,7 @@ function App() {
       </Box>
       <Card elevation={4}>
         <CardContent>
-          {highTemp}
+          { isLoading ?  <CircularProgress /> : highTemp }
         </CardContent>
       </Card>
     </Container>
