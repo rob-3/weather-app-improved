@@ -13,9 +13,8 @@ import {
 } from "@material-ui/core";
 import { useState, useEffect } from "react";
 
-const proxy = "https://cors-anywhere.herokuapp.com/";
-const searchURL = proxy + "https://www.metaweather.com/api/location/search/?query=";
-const woeidURL = proxy + "https://www.metaweather.com/api/location/";
+const searchURL = "https://www.metaweather.com/api/location/search/?query=";
+const woeidURL = "https://www.metaweather.com/api/location/";
 
 const toFarenheit = celcius => Math.round((celcius * 1.8) + 32);
 
