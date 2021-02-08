@@ -36,7 +36,9 @@ function App() {
     return () => document.removeEventListener("keydown", enterListener);
   }, [fetchCityData]);
 
-  const typeHandler = event => setQuery(event.target.value);
+  function typeHandler(event) {
+    setQuery(event.target.value);
+  }
 
   function fetchCityData() {
     setCityName("");
