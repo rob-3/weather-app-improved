@@ -1,6 +1,6 @@
 import './App.css';
 import 'fontsource-roboto';
-import { Container, TextField, Box, Button } from "@material-ui/core";
+import { Container, TextField, Box, Button, Card, CardContent } from "@material-ui/core";
 import { useState } from "react";
 
 function App() {
@@ -22,6 +22,11 @@ function App() {
           </Button>
         </form>
       </Box>
+      <Card elevation={4}>
+        <CardContent>
+          Test content
+        </CardContent>
+      </Card>
     </Container>
   );
 }
