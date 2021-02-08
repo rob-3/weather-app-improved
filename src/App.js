@@ -3,13 +3,36 @@ import 'fontsource-roboto';
 import { Container, TextField, Box, Button, Card, CardContent } from "@material-ui/core";
 import { useState } from "react";
 
+const proxy = "https://cors-anywhere.herokuapp.com/";
+const searchURL = proxy + "https://www.metaweather.com/api/location/search/?query=";
+const woeidURL = proxy + "https://www.metaweather.com/api/location/";
+
+const toFarenheit = celcius => Math.round((celcius * 1.8) + 32);
+
 function App() {
   const [query, setQuery] = useState("");
+  const [highTemp, setHighTemp] = useState(null);
 
   const typeHandler = event => setQuery(event.target.value);
 
   const fetchCityData = () => {
-    console.log("Fetching data...");
+    fetch(searchURL + query)
+      .then(blob => blob.json())
+      .then(data => {
+        console.log(data);
+        const city = data[0];
+        const woeid = city.woeid;
+        fetch(woeidURL + woeid)
+          .then(blob => blob.json())
+          .then(cityData => {
+            const weatherData = cityData.consolidated_weather[0];
+
+            setHighTemp(toFarenheit(weatherData.max_temp));
+          });
+      })
+      .catch(error => {
+        console.log(error)
+      });
   };
 
   return (
@@ -24,7 +47,7 @@ function App() {
       </Box>
       <Card elevation={4}>
         <CardContent>
-          Test content
+          {highTemp}
         </CardContent>
       </Card>
     </Container>
