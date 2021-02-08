@@ -20,7 +20,7 @@ const toFarenheit = celcius => Math.round((celcius * 1.8) + 32);
 
 function App() {
   const [query, setQuery] = useState("");
-  const [weatherData, setWeatherData] = useState({});
+  const [weatherData, setWeatherData] = useState(null);
   const [isLoading, setLoading] = useState(false);
 
   const typeHandler = event => setQuery(event.target.value);
@@ -51,6 +51,11 @@ function App() {
       });
   };
 
+  const output = 
+    isLoading ? <CircularProgress /> :
+    !weatherData ? null :
+    <WeatherData weatherData={weatherData}/>;
+
   return (
     <Container>
       <Box m={5}>
@@ -61,18 +66,22 @@ function App() {
           </Button>
         </form>
       </Box>
-      <Card elevation={4}>
-        <CardContent>
-          { isLoading ?  <CircularProgress /> : 
-          <Typography>
-            High: {weatherData.high}°F<br />
-            Low: {weatherData.low}°F<br />
-            Weather: {weatherData.weather}
-          </Typography>
-          }
-        </CardContent>
-      </Card>
+      {output}
     </Container>
+  );
+}
+
+function WeatherData({ weatherData }) {
+  return (
+    <Card elevation={4}>
+      <CardContent>
+        <Typography>
+          High: {weatherData.high}°F<br />
+          Low: {weatherData.low}°F<br />
+          Weather: {weatherData.weather}
+        </Typography>
+      </CardContent>
+    </Card>
   );
 }
 
