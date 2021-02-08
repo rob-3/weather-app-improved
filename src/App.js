@@ -22,15 +22,18 @@ function App() {
   const [query, setQuery] = useState("");
   const [weatherData, setWeatherData] = useState(null);
   const [isLoading, setLoading] = useState(false);
+  const [cityName, setCityName] = useState("");
 
   const typeHandler = event => setQuery(event.target.value);
 
   const fetchCityData = () => {
+    setCityName("");
     setLoading(true);
     fetch(searchURL + query)
       .then(blob => blob.json())
       .then(data => {
         const city = data[0];
+        setCityName(city.title);
         const woeid = city.woeid;
         fetch(woeidURL + woeid)
           .then(blob => blob.json())
@@ -65,6 +68,9 @@ function App() {
           </Button>
         </form>
       </Box>
+      <Typography variant="h3">
+        {cityName}
+      </Typography>
       {output}
     </Container>
   );
