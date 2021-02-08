@@ -30,7 +30,6 @@ function App() {
     fetch(searchURL + query)
       .then(blob => blob.json())
       .then(data => {
-        console.log(data);
         const city = data[0];
         const woeid = city.woeid;
         fetch(woeidURL + woeid)
