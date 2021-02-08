@@ -20,7 +20,7 @@ const toFarenheit = celcius => Math.round((celcius * 1.8) + 32);
 
 function App() {
   const [query, setQuery] = useState("");
-  const [weatherData, setWeatherData] = useState(null);
+  const [weekWeather, setWeekWeather] = useState(null);
   const [isLoading, setLoading] = useState(false);
   const [cityName, setCityName] = useState("");
 
@@ -38,14 +38,17 @@ function App() {
         fetch(woeidURL + woeid)
           .then(blob => blob.json())
           .then(cityData => {
-            const weatherData = cityData.consolidated_weather[0];
+            const verboseWeekWeather = cityData.consolidated_weather;
 
             setLoading(false);
-            setWeatherData({
-              high: toFarenheit(weatherData.max_temp),
-              low: toFarenheit(weatherData.min_temp),
-              weather: weatherData.weather_state_name,
-            });
+            setWeekWeather(
+              verboseWeekWeather.map(dayWeather => ({
+                high: toFarenheit(dayWeather.max_temp),
+                low: toFarenheit(dayWeather.min_temp),
+                weather: dayWeather.weather_state_name,
+                date: dayWeather.applicable_date,
+              }))
+            );
           });
       })
       .catch(error => {
@@ -55,8 +58,8 @@ function App() {
 
   const output = 
     isLoading ? <CircularProgress /> :
-    !weatherData ? null :
-    <WeatherData weatherData={weatherData}/>;
+    !weekWeather ? null :
+    <WeeklyForcast weekWeather={weekWeather}/>;
 
   return (
     <Container>
@@ -76,17 +79,26 @@ function App() {
   );
 }
 
-function WeatherData({ weatherData }) {
+function WeeklyForcast({ weekWeather }) {
+  return weekWeather.map(data => <DailyForcast key={String(data.id)} weatherData={data} />);
+}
+
+function DailyForcast({ weatherData }) {
   return (
-    <Card elevation={4}>
-      <CardContent>
-        <Typography>
-          High: {weatherData.high}°F<br />
-          Low: {weatherData.low}°F<br />
-          Weather: {weatherData.weather}
-        </Typography>
-      </CardContent>
-    </Card>
+    <Box m={1}>
+      <Card elevation={3}>
+        <CardContent>
+          <Typography variant="h5">
+            {weatherData.date}
+          </Typography>
+          <Typography>
+            High: {weatherData.high}°F<br />
+            Low: {weatherData.low}°F<br />
+            Weather: {weatherData.weather}
+          </Typography>
+        </CardContent>
+      </Card>
+    </Box>
   );
 }
 
