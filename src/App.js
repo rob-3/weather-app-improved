@@ -10,13 +10,12 @@ import {
   Typography,
   List,
   ListItem,
-  CardMedia,
 } from "@material-ui/core";
 import { useState, useEffect } from "react";
 
-const proxy = "https://cors-anywhere.herokuapp.com/";
-const searchURL = proxy + "https://www.metaweather.com/api/location/search/?query=";
-const woeidURL = proxy + "https://www.metaweather.com/api/location/";
+//const proxy = "https://cors-anywhere.herokuapp.com/";
+const searchURL = "https://www.metaweather.com/api/location/search/?query=";
+const woeidURL = "https://www.metaweather.com/api/location/";
 const imgURL = "https://www.metaweather.com/static/img/weather/"
 
 const toFarenheit = celcius => Math.round((celcius * 1.8) + 32);
@@ -62,6 +61,10 @@ function App() {
           }
         })));
         setLoading(false);
+        if (data.length === 1) {
+          setSelectedIndex(0);
+          fetchWeatherData(cities[0]);
+        }
       })
       .catch(error => {
         console.log(error);
@@ -136,7 +139,7 @@ function DailyForcast({ weatherData }) {
   return (
     <Box display="inline-block" m={1}>
       <Card elevation={3}>
-        <CardMedia style={{ height: 140 }} image={weatherData.imgURL}/>
+        <img style={{ height: 180 }} src={weatherData.imgURL}/>
         <CardContent>
           <Typography variant="h5">
             {weatherData.date}
